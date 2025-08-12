@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "InputActionValue.h"
 #include "GameFramework/Pawn.h"
 #include "PlayerPawn.generated.h"
 
@@ -34,5 +35,21 @@ public:
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UStaticMeshComponent* MeshComp;
-	
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Speed = 500.f;
+
+	void OnMyHorizontal(float Value);
+	void OnMyVertical(float Value);
+
+	float H;
+	float V;
+
+	UPROPERTY(EditAnywhere)
+	class UInputMappingContext* IMC_Player;
+
+	UPROPERTY(EditAnywhere)
+	class UInputAction* IA_Move;
+
+	void OnMyMove(const FInputActionValue& Value);
 };

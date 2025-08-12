@@ -2,7 +2,9 @@
 
 
 #include "PlayerPawn.h"
-#include "Components/StaticMeshComponent.h"
+#include "EnhancedInputSubsystems.h"
+#include "EnhancedInputComponent.h"
+
 
 // Sets default values
 APlayerPawn::APlayerPawn()
@@ -20,6 +22,16 @@ void APlayerPawn::BeginPlay()
 {
 	Super::BeginPlay();
 
+	APlayerController* pc = GetWorld()->GetFirstPlayerController();
+	
+	UEnhancedInputLocalPlayerSubsystem* subsys = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(pc->GetLocalPlayer());
+
+	 if (subsys)
+	 {
+	 	subsys->AddMappingContext(IMC_Player, 0);
+	 }
+	
+
 	
 }
 
@@ -28,6 +40,18 @@ void APlayerPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	// P = P0 + vt
+	FVector P0 = GetActorLocation();
+	FVector direction = FVector(0, H, V);
+	direction.Normalize();
+	FVector velocity = direction * Speed;
+
+	SetActorLocation(P0 + velocity * DeltaTime);
+
+	// SetActorLocation(GetActorLocation() + FVector(0, H, V).GetSafeNormal() * Speed * DeltaTime);
+
+	H = V = 0;
+
 }
 
 // Called to bind functionality to input
@@ -35,5 +59,37 @@ void APlayerPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	// PlayerInputComponent->BindAxis(TEXT("Horizontal"), this, &APlayerPawn::OnMyHorizontal);
+	//
+	// PlayerInputComponent->BindAxis(TEXT("Vertical"), this, &APlayerPawn::OnMyVertical);
+	UEnhancedInputComponent* input = CastChecked<UEnhancedInputComponent>(PlayerInputComponent);
+
+	//check(nullptr == input)
+	
+	
+	if (input)
+	{
+		input->BindAction(IA_Move, ETriggerEvent::Triggered, this, &APlayerPawn::OnMyMove);
+	}
+	
+}
+
+void APlayerPawn::OnMyHorizontal(float Value)
+{
+	H = Value;
+	//UE_LOG(LogTemp, Warning, TEXT("%s"), *FString(__FUNCTION__))
+}
+
+void APlayerPawn::OnMyVertical(float Value)
+{
+	V = Value;
+	//UE_LOG(LogTemp, Warning, TEXT("%s"), *FString(__FUNCTION__))
+}
+
+void APlayerPawn::OnMyMove(const FInputActionValue& Value)
+{
+	FVector2D v = Value.Get<FVector2D>();
+	V = v.X;
+	H = v.Y;
 }
 
