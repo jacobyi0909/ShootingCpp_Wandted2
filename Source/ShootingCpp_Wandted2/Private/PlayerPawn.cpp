@@ -4,16 +4,36 @@
 #include "PlayerPawn.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "Components/BoxComponent.h"
 
-
-// Sets default values
 APlayerPawn::APlayerPawn()
 {
- 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	// BoxComp를 생성해서 루트컴포넌트로 하고싶다.
+	BoxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComp"));
+	SetRootComponent(BoxComp);
+	
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
 	MeshComp->SetupAttachment(RootComponent);
+
+	ConstructorHelpers::FObjectFinder<UStaticMesh> tempMesh(TEXT("/Script/Engine.StaticMesh'/Engine/BasicShapes/Cube.Cube'"));
+
+	// 만약 로딩을 성공했다면
+	if (tempMesh.Succeeded())
+	{
+		// MeshComp의 staticMesh를 업데이트 하고싶다
+		MeshComp->SetStaticMesh(tempMesh.Object);
+
+	}
+
+	ConstructorHelpers::FObjectFinder<UMaterial> tempMat(TEXT("/Script/Engine.Material'/Engine/BasicShapes/BasicShapeMaterial.BasicShapeMaterial'"));
+	if (tempMat.Succeeded())
+	{
+		MeshComp->SetMaterial(0, tempMat.Object);
+	}
+
+	
 
 }
 
