@@ -18,15 +18,12 @@ APlayerPawn::APlayerPawn()
 	MeshComp->SetupAttachment(RootComponent);
 
 	ConstructorHelpers::FObjectFinder<UStaticMesh> tempMesh(TEXT("/Script/Engine.StaticMesh'/Engine/BasicShapes/Cube.Cube'"));
-
 	// 만약 로딩을 성공했다면
 	if (tempMesh.Succeeded())
 	{
 		// MeshComp의 staticMesh를 업데이트 하고싶다
 		MeshComp->SetStaticMesh(tempMesh.Object);
-
 	}
-
 	ConstructorHelpers::FObjectFinder<UMaterial> tempMat(TEXT("/Script/Engine.Material'/Engine/BasicShapes/BasicShapeMaterial.BasicShapeMaterial'"));
 	if (tempMat.Succeeded())
 	{
@@ -71,7 +68,6 @@ void APlayerPawn::Tick(float DeltaTime)
 	// SetActorLocation(GetActorLocation() + FVector(0, H, V).GetSafeNormal() * Speed * DeltaTime);
 
 	H = V = 0;
-
 }
 
 // Called to bind functionality to input
