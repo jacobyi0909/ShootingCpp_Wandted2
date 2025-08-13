@@ -2,8 +2,11 @@
 
 
 #include "PlayerPawn.h"
+
+#include "BulletActor.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "Components/ArrowComponent.h"
 #include "Components/BoxComponent.h"
 
 APlayerPawn::APlayerPawn()
@@ -30,6 +33,8 @@ APlayerPawn::APlayerPawn()
 		MeshComp->SetMaterial(0, tempMat.Object);
 	}
 
+	FirePointComp = CreateDefaultSubobject<UArrowComponent>(TEXT("FirePointComp"));
+	FirePointComp->SetupAttachment(RootComponent);
 	
 
 }
@@ -86,6 +91,8 @@ void APlayerPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	if (input)
 	{
 		input->BindAction(IA_Move, ETriggerEvent::Triggered, this, &APlayerPawn::OnMyMove);
+		
+		input->BindAction(IA_Fire, ETriggerEvent::Started, this, &APlayerPawn::OnMyFire);
 	}
 	
 }
@@ -109,3 +116,12 @@ void APlayerPawn::OnMyMove(const FInputActionValue& Value)
 	H = v.Y;
 }
 
+void APlayerPawn::OnMyFire(const FInputActionValue& Value)
+{
+	// 총알을 FirePoint에 배치하도록 생성하고싶다.
+	FTransform t = FirePointComp->GetComponentTransform();
+	GetWorld()->SpawnActor<ABulletActor>(BulletFactory, t);
+
+	// ABulletActor를 Cpp로 완성하는 경우는 아래와같이 UClass를 가져와서 Spawn한다.
+	//GetWorld()->SpawnActor<ABulletActor>(ABulletActor::StaticClass(), t);
+}

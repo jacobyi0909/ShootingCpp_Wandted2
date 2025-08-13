@@ -52,5 +52,17 @@ public:
 	UPROPERTY(EditAnywhere)
 	class UInputAction* IA_Move;
 
+	UPROPERTY(EditAnywhere)
+	class UInputAction* IA_Fire;
+
 	void OnMyMove(const FInputActionValue& Value);
+	void OnMyFire(const FInputActionValue& Value);
+
+	// 총구위치를 만들고싶다.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UArrowComponent* FirePointComp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<class ABulletActor> BulletFactory;
 };
+
