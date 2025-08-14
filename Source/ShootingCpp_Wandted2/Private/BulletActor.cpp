@@ -3,6 +3,7 @@
 
 #include "BulletActor.h"
 
+#include "EnemyActor.h"
 #include "Components/BoxComponent.h"
 
 // Sets default values
@@ -38,6 +39,11 @@ ABulletActor::ABulletActor()
 void ABulletActor::BeginPlay()
 {
 	Super::BeginPlay();
+
+	BoxComp->OnComponentBeginOverlap.AddDynamic(
+		this,
+		&ABulletActor::OnBoxCompOverlap
+	);
 	
 }
 
@@ -52,3 +58,31 @@ void ABulletActor::Tick(float DeltaTime)
 
 }
 
+void ABulletActor::NotifyActorBeginOverlap(AActor* OtherActor)
+{
+	Super::NotifyActorBeginOverlap(OtherActor);
+
+	// // 만약 상대가 Enemy이라면
+	// AEnemyActor* enemy = Cast<AEnemyActor>(OtherActor);
+	// if (enemy)
+	// {
+	// 	// 너죽고 나죽고 하고싶다.
+	// 	enemy->Destroy();
+	// 	this->Destroy();
+	// }
+}
+
+void ABulletActor::OnBoxCompOverlap(
+	UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+	const FHitResult& SweepResult)
+{
+	// 만약 상대가 Enemy이라면
+	AEnemyActor* enemy = Cast<AEnemyActor>(OtherActor);
+	if (enemy)
+	{
+		// 너죽고 나죽고 하고싶다.
+		enemy->Destroy();
+		this->Destroy();
+	}
+}

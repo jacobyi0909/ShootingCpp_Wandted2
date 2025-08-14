@@ -3,6 +3,7 @@
 
 #include "EnemyActor.h"
 
+#include "PlayerPawn.h"
 #include "Components/BoxComponent.h"
 
 // Sets default values
@@ -48,7 +49,19 @@ void AEnemyActor::Tick(float DeltaTime)
 
 	FVector dir = GetActorForwardVector();
 	SetActorLocation(GetActorLocation() + dir * Speed * DeltaTime);
-	
+}
 
+void AEnemyActor::NotifyActorBeginOverlap(AActor* OtherActor)
+{
+	Super::NotifyActorBeginOverlap(OtherActor);
+	// 만약 상대가 플레이어라면
+	auto* player = Cast<APlayerPawn>(OtherActor);
+	if (player)
+	{
+		//  너죽고 나죽고 하고싶다.
+		player->Destroy();
+		this->Destroy();
+	}
+	
 }
 
