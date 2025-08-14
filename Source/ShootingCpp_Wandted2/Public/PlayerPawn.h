@@ -8,6 +8,12 @@
 #include "PlayerPawn.generated.h"
 
 
+enum class AutoFireType
+{
+	Interval,
+	Timer,
+};
+
 //class UStaticMeshComponent; //전방선언 정식으로 쓰는 표현식
 
 UCLASS()
@@ -22,6 +28,8 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 public:	
 	// Called every frame
@@ -56,7 +64,8 @@ public:
 	class UInputAction* IA_Fire;
 
 	void OnMyMove(const FInputActionValue& Value);
-	void OnMyFire(const FInputActionValue& Value);
+	void OnMyFirePressed(const FInputActionValue& Value);
+	void OnMyFireReleased(const FInputActionValue& Value);
 
 	// 총구위치를 만들고싶다.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -64,5 +73,19 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class ABulletActor> BulletFactory;
+
+	void MakeBullet();
+	bool bAutoFire;
+
+	float CurrentTime;
+	float MakeBulletTime = 0.25f;
+
+	AutoFireType AutoFireType = AutoFireType::Timer;
+	FTimerHandle MakeBulletTimerHandle;
+
+	UPROPERTY(EditAnywhere)
+	class USoundBase* FireSound;
+
+
 };
 
