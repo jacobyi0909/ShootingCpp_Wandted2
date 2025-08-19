@@ -37,7 +37,12 @@ APlayerPawn::APlayerPawn()
 	FirePointComp = CreateDefaultSubobject<UArrowComponent>(TEXT("FirePointComp"));
 	FirePointComp->SetupAttachment(RootComponent);
 	
-
+	// Box와 Mesh의 충돌설정을 하고싶다.
+	MeshComp->SetGenerateOverlapEvents(false);
+	MeshComp->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
+	
+	BoxComp->SetGenerateOverlapEvents(true);
+	BoxComp->SetCollisionProfileName(TEXT("Player"));
 }
 
 // Called when the game starts or when spawned

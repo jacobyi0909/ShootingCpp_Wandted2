@@ -39,4 +39,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Speed = 1000.f;
+
+
+	UPROPERTY(EditAnywhere)
+	class UParticleSystem* ExplosionVFX;
+
+	UPROPERTY(EditAnywhere)
+	class USoundBase* ExplosionSound; 
+	
 };

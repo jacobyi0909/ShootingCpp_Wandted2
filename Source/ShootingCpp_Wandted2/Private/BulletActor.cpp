@@ -5,6 +5,8 @@
 
 #include "EnemyActor.h"
 #include "Components/BoxComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Particles/ParticleSystem.h"
 
 // Sets default values
 ABulletActor::ABulletActor()
@@ -33,6 +35,28 @@ ABulletActor::ABulletActor()
 	{
 		MeshComp->SetMaterial(0, tempMat.Object);
 	}
+	// Box와 Mesh의 충돌설정을 하고싶다.
+	MeshComp->SetGenerateOverlapEvents(false);
+	MeshComp->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
+	
+	BoxComp->SetGenerateOverlapEvents(true);
+	BoxComp->SetCollisionProfileName(TEXT("Bullet"));
+
+	ConstructorHelpers::FObjectFinder<UParticleSystem> tempExpVFX(TEXT("/Script/Engine.ParticleSystem'/Game/StarterContent/Particles/P_Explosion.P_Explosion'"));
+
+	if (tempExpVFX.Succeeded())
+	{
+		ExplosionVFX = tempExpVFX.Object;
+	}
+	
+	ConstructorHelpers::FObjectFinder<USoundBase> tempExpSound(TEXT("/Script/Engine.SoundWave'/Game/Shooting/Sounds/Explosion.Explosion'"));
+
+	if (tempExpSound.Succeeded())
+	{
+		ExplosionSound = tempExpSound.Object;
+	}
+	
+	
 }
 
 // Called when the game starts or when spawned
@@ -81,6 +105,15 @@ void ABulletActor::OnBoxCompOverlap(
 	AEnemyActor* enemy = Cast<AEnemyActor>(OtherActor);
 	if (enemy)
 	{
+		// VFX를 표현하고싶다.
+		UGameplayStatics::SpawnEmitterAtLocation(
+			GetWorld(),
+			ExplosionVFX,
+			GetActorLocation()
+		);
+		// 소리도 재생하고싶다.
+		UGameplayStatics::PlaySound2D(GetWorld(), ExplosionSound);
+		
 		// 너죽고 나죽고 하고싶다.
 		enemy->Destroy();
 		this->Destroy();

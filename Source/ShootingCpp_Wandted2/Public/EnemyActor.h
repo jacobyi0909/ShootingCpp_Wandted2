@@ -24,6 +24,9 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 
+	UFUNCTION()
+	void OnBoxCompOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UBoxComponent* BoxComp;
@@ -33,5 +36,11 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Speed = 500.f;
+
+
+	// 적이 
+	// 태어날때(BeginPlay) 방향을 정하고
+	// 살아가면서(Tick) 그 방향으로 계속 이동하고싶다.
+	FVector Dir;
 
 };
