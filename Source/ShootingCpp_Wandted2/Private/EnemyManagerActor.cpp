@@ -4,8 +4,9 @@
 #include "EnemyManagerActor.h"
 
 #include "EnemyActor.h"
+#include "EngineUtils.h"
 #include "Components/ArrowComponent.h"
-
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AEnemyManagerActor::AEnemyManagerActor()
@@ -19,17 +20,26 @@ AEnemyManagerActor::AEnemyManagerActor()
 	SpawnPoint = CreateDefaultSubobject<UArrowComponent>(TEXT("SpawnPoint"));
 	SpawnPoint->SetupAttachment(RootComponent);
 	SpawnPoint->SetRelativeRotation(FRotator(-90.f, 180.f, 0.f));
-	
-	
-
-	
-	
 }
 
 // Called when the game starts or when spawned
 void AEnemyManagerActor::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), SpawnPoints);
+	SpawnPoints.Empty(10);
+	for (TActorIterator<AActor> it(GetWorld()); it; ++it)
+	{
+		AActor* actor = *it;
+		// 만약 actor의 이름에 "SpawnPoint"가 포함되어 있다면SpawnPoints에 추가하고싶다.
+
+		if (actor->GetActorNameOrLabel().Contains(TEXT("SpawnPoint")))
+		{
+			SpawnPoints.Add(actor);
+		}
+	}
+	SpawnPoints.Shrink();
 
 	GetWorld()->GetTimerManager().SetTimer(
 		MakeEnemyTimerHandle,
@@ -54,8 +64,20 @@ void AEnemyManagerActor::Tick(float DeltaTime)
 
 void AEnemyManagerActor::MakeEnemy()
 {
+	static int32 PrevIndex = -1;
+	
 	// SpawnPoint에 적을 생성하고싶다.
+	int32 idx = FMath::RandRange(0, SpawnPoints.Num() - 1);
+	// 만약 이전 인덱스와 현재 인덱스가 같다면
+	if (idx == PrevIndex)
+	{
+		// 현재 인덱스를 다른 인덱스로 하고싶다.
+		idx = (idx + 1) % SpawnPoints.Num();
+		//idx = (idx + SpawnPoints.Num() - 1) % SpawnPoints.Num();
+	}
+	FTransform t = SpawnPoints[idx]->GetActorTransform();
 	GetWorld()->SpawnActor<AEnemyActor>(
-		EnemyFactory, SpawnPoint->GetComponentTransform());
+		EnemyFactory, t);
+	PrevIndex = idx;
 }
 

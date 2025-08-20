@@ -38,5 +38,10 @@ public:
 
 	FTimerHandle MakeEnemyTimerHandle;
 
+	// 태어날 때 레벨에 존재하는 SpawnPoint들을 찾아서 목록으로 기억하고 싶다.
+	// MakeEnemy에서 목록에 있는것중에 랜덤으로 하나 정해서 Transform으로 사용하고 싶다.
+
+	UPROPERTY(VisibleAnywhere)
+	TArray<class AActor*> SpawnPoints;
 
 };
