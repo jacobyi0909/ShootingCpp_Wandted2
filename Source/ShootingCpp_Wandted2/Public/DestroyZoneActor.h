@@ -6,6 +6,12 @@
 #include "GameFramework/Actor.h"
 #include "DestroyZoneActor.generated.h"
 
+DECLARE_DELEGATE_OneParam(FDelegateSingle, int32);
+DECLARE_MULTICAST_DELEGATE_OneParam(FDelegateMulti, int32);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDelegateDynamicMulti, int32, NewValue);
+
+DECLARE_DELEGATE_RetVal_TwoParams(int32, FDelegateSingleRet, int32, int32);
+
 UCLASS()
 class SHOOTINGCPP_WANDTED2_API ADestroyZoneActor : public AActor
 {
@@ -34,7 +40,17 @@ public:
 	UFUNCTION()
 	void OnBoxCompOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-	
-	
+	FDelegateSingle DelegateSingle;
+	FDelegateMulti DelegateMulti;
+	FDelegateDynamicMulti DelegateDynamicMulti;
+
+	FDelegateSingleRet DelegateAdd;
+
+	int32 MyAdd(int32 a, int32 b);
+
+	UFUNCTION()
+	void DelegateTestFunction(int32 NewValue);
 
 };
+
+

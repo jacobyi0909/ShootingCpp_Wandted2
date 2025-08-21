@@ -10,7 +10,7 @@
 // Sets default values
 ADestroyZoneActor::ADestroyZoneActor()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	BoxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComp"));
@@ -22,7 +22,7 @@ ADestroyZoneActor::ADestroyZoneActor()
 
 	BoxComp->SetGenerateOverlapEvents(true);
 	BoxComp->SetCollisionProfileName(TEXT("DestroyZone"));
-	
+
 	MeshComp->SetGenerateOverlapEvents(false);
 	MeshComp->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
 }
@@ -31,14 +31,42 @@ ADestroyZoneActor::ADestroyZoneActor()
 void ADestroyZoneActor::BeginPlay()
 {
 	Super::BeginPlay();
-	BoxComp->OnComponentBeginOverlap.AddDynamic(this, &ADestroyZoneActor::OnBoxCompOverlap);
+	BoxComp->OnComponentBeginOverlap.AddDynamic(
+		this, &ADestroyZoneActor::OnBoxCompOverlap);
+
+	DelegateSingle.BindUObject(this, &ADestroyZoneActor::DelegateTestFunction);
+
+	// Lambda 람다식 - 대단히 소 중 하다
+	int32 ak = 0;	// 지역변수를 캡쳐할때는 레퍼런스 타입 형태로 사용함.
+	auto AddFunction = [this, &ak](int32 a, int32 b)->int32
+	{
+		ak = 0;
+		return a + b;
+	};
+
+	int32 result = AddFunction(1, 2);
+
+	DelegateSingle.BindLambda([this](int32 NewValue)
+	{
+	});
+
+	DelegateAdd.BindUObject(this, &ADestroyZoneActor::MyAdd);
+
+
+	DelegateMulti.AddUObject(this, &ADestroyZoneActor::DelegateTestFunction);
+	
+	DelegateDynamicMulti.AddDynamic(this, &ADestroyZoneActor::DelegateTestFunction);
+	
+	DelegateSingle.Execute(10);
+	int32 r = DelegateAdd.Execute(10, 20);
+	DelegateMulti.Broadcast(10);
+	DelegateDynamicMulti.Broadcast(10);
 }
 
 // Called every frame
 void ADestroyZoneActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void ADestroyZoneActor::OnBoxCompOverlap(
@@ -50,6 +78,15 @@ void ADestroyZoneActor::OnBoxCompOverlap(
 
 	//if (OtherActor->IsA<ABulletActor>() ||		OtherActor->IsA<AEnemyActor>())
 	//{
-		OtherActor->Destroy();
+	OtherActor->Destroy();
 	//} 
+}
+
+void ADestroyZoneActor::DelegateTestFunction(int32 NewValue)
+{
+	UE_LOG(LogTemp, Warning, TEXT("DelegateTestFunction"));
+}
+int32 ADestroyZoneActor::MyAdd(int32 a, int32 b)
+{
+	return a  + b;
 }
