@@ -21,7 +21,11 @@ APlayerPawn::APlayerPawn()
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
 	MeshComp->SetupAttachment(RootComponent);
 
-	ConstructorHelpers::FObjectFinder<UStaticMesh> tempMesh(TEXT("/Script/Engine.StaticMesh'/Engine/BasicShapes/Cube.Cube'"));
+	MeshComp->SetRelativeRotation(FRotator(0.f, 90.f, 90.f));
+	MeshComp->SetRelativeScale3D(FVector(0.575f));
+	
+
+	ConstructorHelpers::FObjectFinder<UStaticMesh> tempMesh(TEXT("/Script/Engine.StaticMesh'/Game/Shooting/Models/SpaceShip/Spaceship_ARA.Spaceship_ARA'"));
 	// 만약 로딩을 성공했다면
 	if (tempMesh.Succeeded())
 	{

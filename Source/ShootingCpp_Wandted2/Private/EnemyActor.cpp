@@ -5,6 +5,7 @@
 
 #include "PlayerPawn.h"
 #include "Components/BoxComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 AEnemyActor::AEnemyActor()
@@ -15,11 +16,16 @@ AEnemyActor::AEnemyActor()
 	// BoxComp를 생성해서 루트컴포넌트로 하고싶다.
 	BoxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComp"));
 	SetRootComponent(BoxComp);
-	
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
 	MeshComp->SetupAttachment(RootComponent);
 
-	ConstructorHelpers::FObjectFinder<UStaticMesh> tempMesh(TEXT("/Script/Engine.StaticMesh'/Engine/BasicShapes/Cube.Cube'"));
+	BoxComp->SetBoxExtent(FVector(50.f));
+	MeshComp->SetRelativeLocationAndRotation(
+		FVector(0, 0, -40.f),
+		FRotator(0, -90.f, 0));
+	MeshComp->SetRelativeScale3D(FVector(0.35f));
+
+	ConstructorHelpers::FObjectFinder<UStaticMesh> tempMesh(TEXT("/Script/Engine.StaticMesh'/Game/Shooting/Models/Drone/Drone_low.Drone_low'"));
 	// 만약 로딩을 성공했다면
 	if (tempMesh.Succeeded())
 	{
@@ -75,6 +81,11 @@ void AEnemyActor::BeginPlay()
 		Dir = target->GetActorLocation() - this->GetActorLocation();
 		Dir.Normalize();
 	}
+
+	// 진행방향으로 회전하고싶다.
+	FRotator newRot = UKismetMathLibrary::MakeRotFromXZ(Dir, GetActorUpVector());
+
+	SetActorRotation(newRot);
 }
 
 // Called every frame

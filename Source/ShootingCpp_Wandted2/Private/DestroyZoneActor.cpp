@@ -61,6 +61,10 @@ void ADestroyZoneActor::BeginPlay()
 	int32 r = DelegateAdd.Execute(10, 20);
 	DelegateMulti.Broadcast(10);
 	DelegateDynamicMulti.Broadcast(10);
+
+
+	DestroyZoneEvent.AddUObject(this, &ADestroyZoneActor::DelegateTestFunction);
+	DestroyZoneEvent.Broadcast(10);
 }
 
 // Called every frame

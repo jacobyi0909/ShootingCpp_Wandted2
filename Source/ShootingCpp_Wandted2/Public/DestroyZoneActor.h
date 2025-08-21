@@ -40,6 +40,11 @@ public:
 	UFUNCTION()
 	void OnBoxCompOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+
+	// 델리게이트, 이벤트
+	DECLARE_EVENT_OneParam(ADestroyZone, FDestroyZoneEvent, int32);
+	FDestroyZoneEvent DestroyZoneEvent;
+
 	FDelegateSingle DelegateSingle;
 	FDelegateMulti DelegateMulti;
 	FDelegateDynamicMulti DelegateDynamicMulti;
@@ -50,7 +55,6 @@ public:
 
 	UFUNCTION()
 	void DelegateTestFunction(int32 NewValue);
-
 };
 
 
