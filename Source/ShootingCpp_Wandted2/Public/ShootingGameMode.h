@@ -16,5 +16,21 @@ class SHOOTINGCPP_WANDTED2_API AShootingGameMode : public AGameModeBase
 
 public:
 	AShootingGameMode();
+
+	virtual void BeginPlay() override;
+
+private:
+	int32 Score;
+
+public:
+	__declspec(property(get=GetScore, put=SetScore)) int32 SCORE;
+	int32 GetScore();
+	void SetScore(int32 NewScore);
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UMainWidget> MainWidgetFactory;
+
+	UPROPERTY()
+	class UMainWidget* MainWidget;
 	
 };

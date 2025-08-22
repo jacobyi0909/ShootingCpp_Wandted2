@@ -5,6 +5,7 @@
 
 #include "PlayerPawn.h"
 #include "Components/BoxComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
@@ -110,8 +111,16 @@ void AEnemyActor::OnBoxCompOverlap(UPrimitiveComponent* OverlappedComponent,
 	
 	if (player)
 	{
-		//  너죽고 나죽고 하고싶다.
-		player->Destroy();
+		// 플레이어의 체력을 1 감소 하고싶다.
+		player->HP--;
+		// 만약 플레이어의 체력이 0이하라면
+		if (player->HP <= 0)
+		{
+			// 플레이어를 파괴하고싶다.
+			player->Destroy();
+			UGameplayStatics::SetGamePaused(GetWorld(), true);
+		}
+
 		this->Destroy();
 	}
 }

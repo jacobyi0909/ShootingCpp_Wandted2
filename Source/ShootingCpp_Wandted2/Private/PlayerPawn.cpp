@@ -62,6 +62,8 @@ void APlayerPawn::BeginPlay()
 	 {
 	 	subsys->AddMappingContext(IMC_Player, 0);
 	 }
+
+	CurHP = MaxHP;
 }
 
 void APlayerPawn::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -163,6 +165,17 @@ void APlayerPawn::MakeBullet()
 
 	// ABulletActor를 Cpp로 완성하는 경우는 아래와같이 UClass를 가져와서 Spawn한다.
 	//GetWorld()->SpawnActor<ABulletActor>(ABulletActor::StaticClass(), t);
+}
+
+int32 APlayerPawn::GetHP()
+{
+	return CurHP;
+}
+
+void APlayerPawn::SetHP(int32 NewHP)
+{
+	CurHP = NewHP;
+	// UI
 }
 
 void APlayerPawn::OnMyFirePressed(const FInputActionValue& Value)

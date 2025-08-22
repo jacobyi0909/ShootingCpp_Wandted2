@@ -86,6 +86,14 @@ public:
 	UPROPERTY(EditAnywhere)
 	class USoundBase* FireSound;
 
+	//  주인공의 체력을 만들고 처리하고싶다.
+	int32 MaxHP = 2;
+	int32 CurHP;
+
+public:
+	__declspec(property(get=GetHP, put=SetHP)) int32 HP;
+	int32 GetHP();
+	void SetHP(int32 NewHP);
 
 };
 

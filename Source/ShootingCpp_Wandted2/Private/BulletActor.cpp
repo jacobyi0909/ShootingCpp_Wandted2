@@ -4,6 +4,8 @@
 #include "BulletActor.h"
 
 #include "EnemyActor.h"
+#include "MainWidget.h"
+#include "ShootingGameMode.h"
 #include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystem.h"
@@ -113,6 +115,12 @@ void ABulletActor::OnBoxCompOverlap(
 		);
 		// 소리도 재생하고싶다.
 		UGameplayStatics::PlaySound2D(GetWorld(), ExplosionSound);
+
+		// 점수를 1점 추가하고싶다.
+		auto* gameMode = Cast<AShootingGameMode>(GetWorld()->GetAuthGameMode());
+
+		//gameMode->SetScore(gameMode->GetScore() + 1);
+		gameMode->SCORE += 1;
 		
 		// 너죽고 나죽고 하고싶다.
 		enemy->Destroy();
