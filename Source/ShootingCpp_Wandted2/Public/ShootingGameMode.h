@@ -32,5 +32,13 @@ public:
 
 	UPROPERTY()
 	class UMainWidget* MainWidget;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UGameOverWidget> GameOverWidgetFactory;
+
+	UPROPERTY()
+	class UGameOverWidget* GameOverWidget;
+
+	void ShowGameOverUI();
 	
 };
