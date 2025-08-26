@@ -16,6 +16,8 @@ void AShootingGameMode::BeginPlay()
 	MainWidget = CreateWidget<UMainWidget>(GetWorld(), MainWidgetFactory);
 
 	MainWidget->AddToViewport();
+	// 체력 게이지를 꽉 채워서 시작하고싶다.
+	MainWidget->UpdateHPWidget(1, 1);
 	
 }
 

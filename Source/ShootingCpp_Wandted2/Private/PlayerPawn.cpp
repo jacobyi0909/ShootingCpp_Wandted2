@@ -6,6 +6,8 @@
 #include "BulletActor.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "MainWidget.h"
+#include "ShootingGameMode.h"
 #include "Components/ArrowComponent.h"
 #include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -175,7 +177,8 @@ int32 APlayerPawn::GetHP()
 void APlayerPawn::SetHP(int32 NewHP)
 {
 	CurHP = NewHP;
-	// UI
+	auto* gm = Cast<AShootingGameMode>(GetWorld()->GetAuthGameMode());
+	gm->MainWidget->UpdateHPWidget(CurHP, MaxHP);
 }
 
 void APlayerPawn::OnMyFirePressed(const FInputActionValue& Value)
