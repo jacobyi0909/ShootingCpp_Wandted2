@@ -3,8 +3,11 @@
 
 #include "EnemyActor.h"
 
+#include "EnemyHpUI.h"
 #include "PlayerPawn.h"
+#include "ShootingGameMode.h"
 #include "Components/BoxComponent.h"
+#include "Components/WidgetComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 
@@ -53,6 +56,8 @@ AEnemyActor::AEnemyActor()
 	// BoxComp->SetCollisionResponseToChannel(ECC_GameTraceChannel1, ECR_Overlap);
 	// BoxComp->SetCollisionResponseToChannel(ECC_GameTraceChannel3, ECR_Overlap);
 
+	HPWidgetComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPWidgetComp"));
+	HPWidgetComp->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
@@ -60,6 +65,9 @@ void AEnemyActor::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	HpUI = Cast<UEnemyHpUI>(HPWidgetComp->GetWidget());
+	HP = MaxHP;
+		
 	BoxComp->OnComponentBeginOverlap.AddDynamic(this, &AEnemyActor::OnBoxCompOverlap);
 
 	// 확률
@@ -119,9 +127,32 @@ void AEnemyActor::OnBoxCompOverlap(UPrimitiveComponent* OverlappedComponent,
 			// 플레이어를 파괴하고싶다.
 			player->Destroy();
 			UGameplayStatics::SetGamePaused(GetWorld(), true);
+			
+			auto* gm = Cast<AShootingGameMode>(GetWorld()->GetAuthGameMode());
+			gm->ShowGameOverUI();
 		}
+
+		// VFX를 표현하고싶다.
+		UGameplayStatics::SpawnEmitterAtLocation(
+			GetWorld(),
+			ExplosionVFX,
+			GetActorLocation()
+		);
+		// 소리도 재생하고싶다.
+		UGameplayStatics::PlaySound2D(GetWorld(), ExplosionSound);
 
 		this->Destroy();
 	}
+}
+
+int32 AEnemyActor::GetHP()
+{
+	return CurHP;
+}
+
+void AEnemyActor::SetHP(int32 NewHP)
+{
+	CurHP = NewHP;
+	HpUI->UpdateHPWidget(CurHP, MaxHP);
 }
 

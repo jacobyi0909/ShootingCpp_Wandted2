@@ -43,4 +43,25 @@ public:
 	// 살아가면서(Tick) 그 방향으로 계속 이동하고싶다.
 	FVector Dir;
 
+	UPROPERTY(EditAnywhere)
+	class UParticleSystem* ExplosionVFX;
+
+	UPROPERTY(EditAnywhere)
+	class USoundBase* ExplosionSound;
+
+	int32 MaxHP = 2;
+	int32 CurHP;
+
+	__declspec(property(get=GetHP, put=SetHP)) int32 HP;
+
+	int32 GetHP();
+	void SetHP(int32 NewHP);
+
+	UPROPERTY(EditAnywhere)
+	class UWidgetComponent* HPWidgetComp;
+	
+	UPROPERTY()
+	class UEnemyHpUI* HpUI;
+
+	 
 };

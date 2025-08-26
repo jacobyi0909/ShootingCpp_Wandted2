@@ -107,6 +107,24 @@ void ABulletActor::OnBoxCompOverlap(
 	AEnemyActor* enemy = Cast<AEnemyActor>(OtherActor);
 	if (enemy)
 	{
+		// 적이 할일
+		// 적의 체력을 1 감소하고싶다.
+		enemy->HP -= 1;
+		// 만약 적의 체력이 0이하라면
+		if (enemy->HP <= 0)
+		{
+			// 점수를 1점 추가하고싶다.
+			auto* gameMode = Cast<AShootingGameMode>(GetWorld()->GetAuthGameMode());
+
+			//gameMode->SetScore(gameMode->GetScore() + 1);
+			gameMode->SCORE += 1;
+		
+			// 너죽고 나죽고 하고싶다.
+			enemy->Destroy();
+		}
+		
+		// 총알이 할일
+		
 		// VFX를 표현하고싶다.
 		UGameplayStatics::SpawnEmitterAtLocation(
 			GetWorld(),
@@ -116,14 +134,13 @@ void ABulletActor::OnBoxCompOverlap(
 		// 소리도 재생하고싶다.
 		UGameplayStatics::PlaySound2D(GetWorld(), ExplosionSound);
 
-		// 점수를 1점 추가하고싶다.
-		auto* gameMode = Cast<AShootingGameMode>(GetWorld()->GetAuthGameMode());
-
-		//gameMode->SetScore(gameMode->GetScore() + 1);
-		gameMode->SCORE += 1;
-		
-		// 너죽고 나죽고 하고싶다.
-		enemy->Destroy();
 		this->Destroy();
+
+		
+
+
+
+		
+		
 	}
 }
