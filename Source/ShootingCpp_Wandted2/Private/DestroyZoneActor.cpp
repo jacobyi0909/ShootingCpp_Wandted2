@@ -5,6 +5,7 @@
 
 #include "BulletActor.h"
 #include "EnemyActor.h"
+#include "PlayerPawn.h"
 #include "Components/BoxComponent.h"
 
 // Sets default values
@@ -78,12 +79,22 @@ void ADestroyZoneActor::OnBoxCompOverlap(
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
 	const FHitResult& SweepResult)
 {
-	// 너만 파괴되어라
+	if (auto* bullet = Cast<ABulletActor>(OtherActor))
+	{
+		// 총알이라면
+		// 비활성화
+		bullet->SetActive(false);
 
-	//if (OtherActor->IsA<ABulletActor>() ||		OtherActor->IsA<AEnemyActor>())
-	//{
-	OtherActor->Destroy();
-	//} 
+		// 탄창에 복귀
+		auto player = Cast<APlayerPawn>(
+			GetWorld()->GetFirstPlayerController()->GetPawn());
+		player->Magazine.Add(bullet);
+	}
+	else
+	{
+		// 너만 파괴되어라
+		OtherActor->Destroy();
+	}
 }
 
 void ADestroyZoneActor::DelegateTestFunction(int32 NewValue)

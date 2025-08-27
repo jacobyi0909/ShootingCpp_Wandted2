@@ -28,7 +28,7 @@ public:
 
 	UFUNCTION()
 	void OnBoxCompOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-	
+
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -45,6 +45,9 @@ public:
 	class UParticleSystem* ExplosionVFX;
 
 	UPROPERTY(EditAnywhere)
-	class USoundBase* ExplosionSound; 
+	class USoundBase* ExplosionSound;
+	
+	void SetActive(bool value);
+
 	
 };

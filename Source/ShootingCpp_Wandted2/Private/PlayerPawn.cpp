@@ -66,6 +66,14 @@ void APlayerPawn::BeginPlay()
 	 }
 
 	CurHP = MaxHP;
+
+	Magazine.Empty(MaxBulletCount);
+	for (int32 i=0 ; i<MaxBulletCount ; i++)
+	{
+		auto* bullet = GetWorld()->SpawnActor<ABulletActor>(BulletFactory);
+		bullet->SetActive(false);
+		Magazine.Add(bullet);
+	}
 }
 
 void APlayerPawn::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -155,9 +163,20 @@ void APlayerPawn::OnMyMove(const FInputActionValue& Value)
 
 void APlayerPawn::MakeBullet()
 {
+	// 만약 탄창이 비었다면 바로 종료 하고싶다.
+	if (Magazine.Num()<= 0)
+	{
+		return;
+	}
 	// 총알을 FirePoint에 배치하도록 생성하고싶다.
 	FTransform t = FirePointComp->GetComponentTransform();
-	GetWorld()->SpawnActor<ABulletActor>(BulletFactory, t);
+	// 탄창에서 총알을 하나 가져와서
+	ABulletActor* bullet = Magazine[0];
+	// 활성화 시킨 후
+	bullet->SetActive(true);
+	bullet->SetActorTransform(t);
+	// 탄창에서 제거하고싶다.
+	Magazine.RemoveAt(0);
 
 	// 총알 발사음을 출력하고 싶다.
 	if (FireSound)

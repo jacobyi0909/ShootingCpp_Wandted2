@@ -5,6 +5,7 @@
 
 #include "EnemyActor.h"
 #include "MainWidget.h"
+#include "PlayerPawn.h"
 #include "ShootingGameMode.h"
 #include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -77,6 +78,11 @@ void ABulletActor::BeginPlay()
 void ABulletActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	if (false == MeshComp->IsVisible())
+	{
+		return;
+	}
+	
 	// 나의 앞 방향을 구하고 싶다.
 	FVector dir = GetActorForwardVector();
 	// 그 방향으로 이동하고싶다.
@@ -134,13 +140,33 @@ void ABulletActor::OnBoxCompOverlap(
 		// 소리도 재생하고싶다.
 		UGameplayStatics::PlaySound2D(GetWorld(), ExplosionSound);
 
-		this->Destroy();
-
-		
-
-
-
-		
-		
+		//this->Destroy();
+		// 비활성화 하고 
+		SetActive(false);
+		// 주인공의 탄창에 나를 넣고싶다.
+		auto player = Cast<APlayerPawn>(
+			GetWorld()->GetFirstPlayerController()->GetPawn());
+		player->Magazine.Add(this);
 	}
+}
+
+// bool B()
+// {
+// 	return true;
+// }
+//
+// bool A()
+// {
+// 	return B() ? A() : B() ? A() : B() ? A() : B();
+// }
+
+void ABulletActor::SetActive(bool value)
+{
+	// 외형을 보이거나 안보이게 하고싶다.
+	MeshComp->SetVisibility(value);
+	// 충돌체를 켜거나 끄고싶다.
+	BoxComp->SetCollisionEnabled(
+		value ?
+		ECollisionEnabled::Type::QueryAndPhysics :
+		ECollisionEnabled::Type::NoCollision);
 }

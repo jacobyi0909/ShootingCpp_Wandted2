@@ -74,6 +74,18 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class ABulletActor> BulletFactory;
 
+	// [총알을 ObjectPool로 관리하고싶다.]
+	// 1. 태어날 때 총알을 미리 만들어서 목록에 넣어놓고싶다.
+	// 2. 그 총알을 비활성화 하고싶다.
+	// 3. 총알을 사용할때 비활성화된 총알을 하나 가져와서 활성화 시킨후 사용하고싶다.
+	// 4. 총알의 쓰임새가 끝났다면 다시 비활성화 하고싶다.
+	UPROPERTY(VisibleAnywhere)
+	TArray<class ABulletActor*> Magazine;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 MaxBulletCount = 20;
+	
+	
 	void MakeBullet();
 	bool bAutoFire;
 

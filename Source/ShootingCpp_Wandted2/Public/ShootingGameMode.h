@@ -20,12 +20,18 @@ public:
 	virtual void BeginPlay() override;
 
 private:
+	int32 HighScore;
 	int32 Score;
 
 public:
 	__declspec(property(get=GetScore, put=SetScore)) int32 SCORE;
 	int32 GetScore();
 	void SetScore(int32 NewScore);
+
+	__declspec(property(get=GetHighScore, put=SetHighScore)) int32 HIGH_SCORE;
+	int32 GetHighScore();
+	void SetHighScore(int32 NewHighScore);
+	
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UMainWidget> MainWidgetFactory;
@@ -40,5 +46,11 @@ public:
 	class UGameOverWidget* GameOverWidget;
 
 	void ShowGameOverUI();
+
+	FString SaveSlotName = TEXT("HIGH_SCORE");
+	int32 SaveUserIndex = 0;
+	
+	void MySaveGame();
+	void MyLoadGame(int32 defaultHighScore = 0);
 	
 };

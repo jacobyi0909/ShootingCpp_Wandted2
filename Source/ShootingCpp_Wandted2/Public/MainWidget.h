@@ -16,13 +16,16 @@ class SHOOTINGCPP_WANDTED2_API UMainWidget : public UUserWidget
 
 public:
 	UPROPERTY(meta=(BindWidget))
+	class UTextBlock* TextHighScore;
+
+	UPROPERTY(meta=(BindWidget))
 	class UTextBlock* TextScore;
 
 	UPROPERTY(meta=(BindWidget))
 	class UPlayerHPWidget* PlayerHP;
 	
 
-	void UpdateTextScore(int32 Score);
+	void UpdateTextScore(int32 HighScore, int32 Score);
 
 	void UpdateHPWidget(const float& curHP, const float& maxHP);
 	

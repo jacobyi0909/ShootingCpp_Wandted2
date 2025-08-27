@@ -6,8 +6,9 @@
 #include "PlayerHPWidget.h"
 #include "Components/TextBlock.h"
 
-void UMainWidget::UpdateTextScore(int32 Score)
+void UMainWidget::UpdateTextScore(int32 HighScore, int32 Score)
 {
+	TextHighScore->SetText(FText::AsNumber(HighScore));
 	TextScore->SetText(FText::AsNumber(Score));
 }
 
