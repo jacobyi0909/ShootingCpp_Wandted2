@@ -4,6 +4,7 @@
 #include "PlayerPawn.h"
 
 #include "BulletActor.h"
+#include "EngineUtils.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "MainWidget.h"
@@ -11,6 +12,7 @@
 #include "Components/ArrowComponent.h"
 #include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Materials/MaterialParameterCollectionInstance.h"
 
 APlayerPawn::APlayerPawn()
 {
@@ -56,6 +58,32 @@ void APlayerPawn::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (BackgroundScrollType == BackgroundScrollType::DynamicMaterialInstance)
+	{
+		AActor* bg = nullptr;
+		for (TActorIterator<AActor> it(GetWorld()); it; ++it)
+		{
+			AActor* actor = *it;
+			if (actor->Tags.Contains(TEXT("Background")))
+			{
+				bg = actor;
+				break;
+			}
+		}
+		if (bg)
+		{
+			UStaticMeshComponent* bgMeshComp = Cast<UStaticMeshComponent>(bg->GetComponentByClass(UStaticMeshComponent::StaticClass()));
+			if (bgMeshComp)
+			{
+				Mat = bgMeshComp->CreateDynamicMaterialInstance(0);
+			}
+		}
+	}
+	else // MaterialParameterCollection
+	{
+		MPC_BGInstance = GetWorld()->GetParameterCollectionInstance(MPC_BGFactory);
+	}
+
 	APlayerController* pc = GetWorld()->GetFirstPlayerController();
 	
 	UEnhancedInputLocalPlayerSubsystem* subsys = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(pc->GetLocalPlayer());
@@ -88,6 +116,26 @@ void APlayerPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (BackgroundScrollType == BackgroundScrollType::DynamicMaterialInstance)
+	{
+		if (Mat)
+		{
+			ScrollTime += DeltaTime * ScrollSpeed;
+			Mat->SetScalarParameterValue(TEXT("ScrollTime"), ScrollTime);
+			UE_LOG(LogTemp, Warning, TEXT("TickTickTickTickTickTick"))
+		}
+	}
+	else // MaterialParameterCollection
+	{
+		if (MPC_BGInstance)
+		{
+			ScrollTime += DeltaTime * ScrollSpeed;
+			MPC_BGInstance->SetScalarParameterValue(TEXT("ScrollTime"), ScrollTime);
+		}
+	}
+
+
+	
 	// P = P0 + vt
 	FVector P0 = GetActorLocation();
 	FVector direction = FVector(0, H, V);

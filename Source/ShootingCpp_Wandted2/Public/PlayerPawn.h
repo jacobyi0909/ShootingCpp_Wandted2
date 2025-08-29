@@ -14,6 +14,12 @@ enum class AutoFireType
 	Timer,
 };
 
+enum class BackgroundScrollType
+{
+	DynamicMaterialInstance,
+	MaterialParameterCollection
+};
+
 //class UStaticMeshComponent; //전방선언 정식으로 쓰는 표현식
 
 UCLASS()
@@ -106,6 +112,25 @@ public:
 	__declspec(property(get=GetHP, put=SetHP)) int32 HP;
 	int32 GetHP();
 	void SetHP(int32 NewHP);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite);
+	float ScrollTime;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite);
+	float ScrollSpeed = 1.f;
+
+
+	// 배경스크롤 처리 ========================================================
+	BackgroundScrollType BackgroundScrollType = BackgroundScrollType::MaterialParameterCollection;
+
+	// MaterialParameterCollection
+	UPROPERTY();
+	class UMaterialInstanceDynamic* Mat;
+
+	// MaterialParameterCollection
+	UPROPERTY(EditAnywhere)
+	class UMaterialParameterCollection* MPC_BGFactory;
+	UPROPERTY()
+	class UMaterialParameterCollectionInstance* MPC_BGInstance;
 
 };
 
